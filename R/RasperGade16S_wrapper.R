@@ -2,7 +2,7 @@
 #' @description A wrapper function to "one-click-and-run" the default pipeline
 #' @export
 #' @rdname predict_16SGCN_from_sequences
-predict_16SGCN_from_sequences = function(seqs, numCores=0){
+predict_16SGCN_from_sequences = function(seqs, numCores=0, rmTmpFiles=FALSE){
   if(missing(seqs)){
     seqs = system.file("extdata/Demo","demo.SILVA.fasta",package="RasperGade16S",mustWork=TRUE)
     cat(sprintf("No FASTA file supplied, running prediction using demo sequences in\n%s\n\n",seqs))
@@ -10,6 +10,9 @@ predict_16SGCN_from_sequences = function(seqs, numCores=0){
   align.out = align_with_HMM_and_trim(seqs=seqs)
   epa.out = insert_query_with_EPA(seqs="RasperGade16S_align/trimmed.afa", numCores=numCores)
   pred.GCN = predict_16SGCN_from_jplace(epa.out$jplace,save2file = TRUE)
+  if (rmTmpFiles) {
+    cleanup_tmp_dirs()
+  }
   return(pred.GCN)
 }
 
@@ -56,3 +59,16 @@ predict_16SGCN_from_jplace = function(jplace,numCores = 1,save2file=FALSE){
   return(list(tab=insert.discrete.res[,-1],GCN=insert.GCN,error = insert.res$error))
 }
 
+cleanup_tmp_dirs <- function() {
+  tmp_dirs <- c(
+    file.path(getwd(), "RasperGade16S_align"),
+    file.path(getwd(), "RasperGade16S_EPA")
+  )
+  cat("Removing temporary files...\n")
+  for (dir_path in tmp_dirs) {
+    cat(sprintf("  `%s`\n", dir_path))
+    if (dir.exists(dir_path)) {
+      unlink(dir_path, recursive=TRUE)
+    }
+  }
+}
