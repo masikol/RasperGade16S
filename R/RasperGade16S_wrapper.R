@@ -2,13 +2,13 @@
 #' @description A wrapper function to "one-click-and-run" the default pipeline
 #' @export
 #' @rdname predict_16SGCN_from_sequences
-predict_16SGCN_from_sequences = function(seqs){
+predict_16SGCN_from_sequences = function(seqs, numCores=0){
   if(missing(seqs)){
     seqs = system.file("extdata/Demo","demo.SILVA.fasta",package="RasperGade16S",mustWork=TRUE)
     cat(sprintf("No FASTA file supplied, running prediction using demo sequences in\n%s\n\n",seqs))
     }
   align.out = align_with_HMM_and_trim(seqs=seqs)
-  epa.out = insert_query_with_EPA(seqs="RasperGade16S_align/trimmed.afa")
+  epa.out = insert_query_with_EPA(seqs="RasperGade16S_align/trimmed.afa", numCores=numCores)
   pred.GCN = predict_16SGCN_from_jplace(epa.out$jplace,save2file = TRUE)
   return(pred.GCN)
 }
