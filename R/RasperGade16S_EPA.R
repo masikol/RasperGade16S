@@ -58,7 +58,7 @@ align_with_HMM_and_trim = function(seqs,hmm,mapali,mask,save.path){
 #' @rdname trim_sequence_with_mask
 trim_sequence_with_mask = function(align,trimmed.align,mask){
   if(missing(mask)){
-    mask = RasperGade.GG.13.8.mask.keys
+    mask = RasperGade16S.GG.13.8.mask.keys
   }else{
     if(length(mask)<=1) mask = readRDS(mask)
     }
